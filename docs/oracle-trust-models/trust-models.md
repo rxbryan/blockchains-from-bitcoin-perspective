@@ -161,5 +161,5 @@ is responsible for verifying.
 
 The right mental model is not that one approach is strictly better. It is
 that each optimizes for different things, and each inherits a distinct
-failure surface as a result. The [failure modes section](/failure-modes-and-tradeoffs)
+failure surface as a result. The [failure modes section](/oracle-trust-models/failure-modes-and-tradeoffs)
 covers what can go wrong in each.

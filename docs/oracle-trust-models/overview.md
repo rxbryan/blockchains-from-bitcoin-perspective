@@ -105,7 +105,7 @@ This guide works through the trust models, cryptographic mechanics, and
 failure surfaces of Bitcoin-native oracle designs, using EVM oracle systems
 as the contrasting reference point throughout.
 
-- [Trust Models](/trust-models) covers how correctness is established in each system — including threshold multi-oracle constructions (VweTS) and privacy-preserving oracle designs (DECO). 
-- [Oracles in Bitcoin](/oracles-in-bitcoin) gets into the mechanics of how Bitcoin's signature-based approach differs from the EVM data-feed pattern. 
-- [Encoding External Events](/encoding-external-events) is the most technically dense section: DLCs, adaptor signatures, nonce commitments, BIP-340, the full construction. 
-- [Failure Modes and Tradeoffs](/failure-modes-and-tradeoffs) covers what breaks in each model and why.
+- [Trust Models](/oracle-trust-models/trust-models) covers how correctness is established in each system — including threshold multi-oracle constructions (VweTS) and privacy-preserving oracle designs (DECO). 
+- [Oracles in Bitcoin](/oracle-trust-models/oracles-in-bitcoin) gets into the mechanics of how Bitcoin's signature-based approach differs from the EVM data-feed pattern. 
+- [Encoding External Events](/oracle-trust-models/encoding-external-events) is the most technically dense section: DLCs, adaptor signatures, nonce commitments, BIP-340, the full construction. 
+- [Failure Modes and Tradeoffs](/oracle-trust-models/failure-modes-and-tradeoffs) covers what breaks in each model and why.
