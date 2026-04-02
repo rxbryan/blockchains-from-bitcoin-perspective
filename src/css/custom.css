@@ -49,21 +49,29 @@ code {
   border-radius: 3px;
 }
 
-/* Homepage cards */
+/* Series grid — responsive, works for any number of cards */
+.series-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Series card */
 .home-card {
   padding: 1.5rem;
   border: 1px solid var(--ifm-toc-border-color);
   border-radius: 8px;
-  margin-bottom: 1rem;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .home-card:hover {
   border-color: var(--ifm-color-primary);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .home-card h2 {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   margin-bottom: 0.75rem;
   margin-top: 0;
 }
@@ -71,4 +79,14 @@ code {
 .home-card p {
   font-size: 0.95rem;
   margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.hero--primary {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+.hero__subtitle {
+  color: #a0a0a0;
 }
