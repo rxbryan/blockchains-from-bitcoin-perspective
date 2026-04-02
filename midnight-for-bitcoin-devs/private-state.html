@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-midnight-for-bitcoin-devs/private-state" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">Private State vs Public UTXO | Blockchains from a Bitcoin Perspective</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" property="og:image" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/img/og-card.png"><meta data-rh="true" name="twitter:image" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/img/og-card.png"><meta data-rh="true" property="og:url" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="og:type" content="website"><meta data-rh="true" name="og:title" content="Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="og:description" content="Technical analysis of blockchain systems written from the perspective of a Bitcoin protocol developer. Covers oracle trust models, Midnight Network, UTXO mechanics, ZK proofs, and more."><meta data-rh="true" name="og:url" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" name="twitter:title" content="Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="twitter:description" content="Technical analysis of blockchain systems written from the perspective of a Bitcoin protocol developer."><meta data-rh="true" name="keywords" content="bitcoin, blockchain, midnight network, oracle, utxo, zero knowledge proofs, compact, bitcoin script, dlc, chainlink"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Private State vs Public UTXO | Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="description" content="Part 2 of 4: Midnight for Bitcoin Developers"><meta data-rh="true" property="og:description" content="Part 2 of 4: Midnight for Bitcoin Developers"><link data-rh="true" rel="icon" href="/blockchains-from-bitcoin-perspective/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"><link data-rh="true" rel="alternate" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state" hreflang="en"><link data-rh="true" rel="alternate" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Private State vs Public UTXO","item":"https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"}]}</script><link rel="stylesheet" href="/blockchains-from-bitcoin-perspective/assets/css/styles.108627a8.css">
+<script src="/blockchains-from-bitcoin-perspective/assets/js/runtime~main.729a389d.js" defer="defer"></script>
+<script src="/blockchains-from-bitcoin-perspective/assets/js/main.dc819c2a.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/blockchains-from-bitcoin-perspective/"><b class="navbar__title text--truncate">Blockchains from a Bitcoin Perspective</b></a><a class="navbar__item navbar__link" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/overview">Oracle Trust Models</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro">Midnight for Bitcoin Devs</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/rxbryan/blockchains-from-bitcoin-perspective" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--active"><span title="Midnight for Bitcoin Developers" class="categoryLinkLabel_W154">Midnight for Bitcoin Developers</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model"><span title="The UTXO Model Through Bitcoin Eyes" class="linkLabel_WmDU">The UTXO Model Through Bitcoin Eyes</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"><span title="Private State vs Public UTXO" class="linkLabel_WmDU">Private State vs Public UTXO</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"><span title="NIGHT/DUST vs the Bitcoin Fee Market" class="linkLabel_WmDU">NIGHT/DUST vs the Bitcoin Fee Market</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits"><span title="Compact Circuits vs Bitcoin Script" class="linkLabel_WmDU">Compact Circuits vs Bitcoin Script</span></a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/blockchains-from-bitcoin-perspective/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Midnight for Bitcoin Developers</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Private State vs Public UTXO</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Private State vs Public UTXO</h1></header>
+<p><em>Part 2 of 4: Midnight for Bitcoin Developers</em></p>
+<hr>
+<p>Bitcoin&#x27;s transparency is not an accident or a limitation waiting to be fixed.
+It is a deliberate design property that enables trustless verification. Anyone
+with a copy of the chain can audit any transaction that has ever occurred,
+verify any balance, trace any coin&#x27;s history back to its coinbase. The UTXO set
+is a complete, independently verifiable statement of the current ownership of
+every satoshi in existence. You don&#x27;t have to trust anyone to know it&#x27;s correct.
+You verify it yourself.</p>
+<p>This transparency has costs. Every payment you make is permanently public. Every
+address you&#x27;ve received to is permanently associated with every address you&#x27;ve
+sent from, if those transactions are ever linked. CoinJoin, PayJoin, silent
+payments, BIP-47: the entire privacy tooling ecosystem in Bitcoin exists to
+work around a transparency model that makes privacy difficult by default and
+requires active effort to achieve.</p>
+<p>Midnight inverts this. Privacy is the default. Public visibility is the
+exception that requires an explicit action. Understanding what that means at an
+implementation level, not just as a marketing claim, is what this article is
+about.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-two-ledger-model">The two-ledger model<a href="#the-two-ledger-model" class="hash-link" aria-label="Direct link to The two-ledger model" title="Direct link to The two-ledger model" translate="no">​</a></h2>
+<p>In Bitcoin there is one ledger. It&#x27;s public. Everything on it is visible to
+everyone. Your UTXO is on the ledger. When you spend it, the spend is on the
+ledger. The chain is the single source of truth and it&#x27;s globally readable.</p>
+<p>Midnight operates two distinct state spaces simultaneously.</p>
+<p>The first is the public ledger. This is on-chain, globally readable, and
+permanent. Public contract state lives here: counter values, public message
+fields, unshielded token balances, anything the contract explicitly designates
+as public. This part behaves like what you&#x27;d expect from any blockchain. Nodes
+agree on it, it&#x27;s auditable, it cannot be selectively hidden.</p>
+<p>The second is private state. By default, private state is stored locally on the
+user&#x27;s machine and is not part of the chain or validator state. It is not
+shared with validators as part of normal protocol operation. The chain has no
+copy of it. If the user loses it and has no backup or recovery mechanism,
+it&#x27;s gone.</p>
+<p>The connection between these two state spaces is the ZK proof. When a user
+wants to take an action that modifies public ledger state, they run their
+circuit locally against their private state and produce a proof. The proof goes
+to the chain. The private state does not. Validators confirm that the proof is
+valid for the circuit, that the private state justifies the proposed public
+state change, without learning the private state itself.</p>
+<p>Because private state is not globally available, correctness relies on users
+providing valid proofs at each interaction rather than on shared state
+replication. In multi-party interactions, coordination happens through shared
+public commitments and proofs rather than shared private state, which introduces
+additional complexity for protocol design. This is a different trust model from
+Bitcoin, where the full chain state is replicated and independently verifiable
+by every node.</p>
+<p>For Bitcoin developers this requires a genuine mental adjustment. In Bitcoin, if
+something happened on the chain, you can see it. In Midnight, a valid
+transaction can reach the chain with private inputs that no validator, no node,
+no block explorer, and no chain analyst will ever see. The proof certifies that
+a valid private witness exists satisfying the circuit constraints. That&#x27;s all
+the chain ever learns.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-private-state-actually-contains">What private state actually contains<a href="#what-private-state-actually-contains" class="hash-link" aria-label="Direct link to What private state actually contains" title="Direct link to What private state actually contains" translate="no">​</a></h2>
+<p>Private state in a Midnight contract is whatever the contract developer puts
+there. It lives in a locally encrypted LevelDB store on the user&#x27;s machine.
+Contracts read from and write to it during circuit execution. None of those
+reads or writes appear in the transaction.</p>
+<p>This has a backup implication Bitcoin developers should note. In Bitcoin, your
+seed is your coins. Lose the seed, lose access, but anyone with the seed can
+recover everything from the chain. In Midnight, your seed recovers your wallet
+keys but not your local private contract state. If that state is lost and the
+contract has no recovery path built into it, you may lose the ability to
+interact with that contract even with the seed intact. Private state backups are
+the user&#x27;s responsibility, not the protocol&#x27;s.</p>
+<p>Imagine a contract that authorizes actions based on membership in a set of
+secret keys. The authorized keys are stored in a Merkle tree on the public
+ledger, but only as commitments, hashes of the keys, not the keys themselves.
+When a user wants to prove they are authorized, they run a circuit that:</p>
+<ol>
+<li class="">Reads their secret key from local private state</li>
+<li class="">Derives the corresponding commitment</li>
+<li class="">Proves a Merkle path from their commitment to the tree root</li>
+<li class="">Proves they know the secret key corresponding to that commitment</li>
+</ol>
+<p>The public transcript records that a valid proof was provided and that the
+action was authorized. It records nothing about which key was used, who used it,
+or what the key was. Multiple authorized users can interact with the same
+contract and none of their interactions are directly linkable on-chain, though
+indirect correlation may still be possible depending on usage patterns.</p>
+<p>Here is what that looks like in Compact:</p>
+<div class="language-compact codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-compact codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">import CompactStandardLibrary;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">witness secretKey(): Bytes&lt;32&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">witness findAuthPath(pk: Bytes&lt;32&gt;): MerkleTreePath&lt;10, Bytes&lt;32&gt;&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export ledger authorizedCommitments: HistoricMerkleTree&lt;10, Bytes&lt;32&gt;&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export ledger authorizedNullifiers: Set&lt;Bytes&lt;32&gt;&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export ledger restrictedCounter: Counter;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export circuit increment(): [] {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  const sk = secretKey();</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  const authPath = findAuthPath(publicKey(sk));</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  assert(authorizedCommitments.checkRoot(</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    merkleTreePathRoot&lt;10, Bytes&lt;32&gt;&gt;(authPath)),</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    &quot;not authorized&quot;);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  const nul = nullifier(sk);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  assert !authorizedNullifiers.member(nul) &quot;already incremented&quot;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  authorizedNullifiers.insert(disclose(nul));</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  restrictedCounter.increment(1);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">circuit publicKey(sk: Bytes&lt;32&gt;): Bytes&lt;32&gt; {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  return persistentHash&lt;Vector&lt;2, Bytes&lt;32&gt;&gt;&gt;(</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    [pad(32, &quot;commitment-domain&quot;), sk]);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">circuit nullifier(sk: Bytes&lt;32&gt;): Bytes&lt;32&gt; {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  return persistentHash&lt;Vector&lt;2, Bytes&lt;32&gt;&gt;&gt;(</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    [pad(32, &quot;nullifier-domain&quot;), sk]);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span></code></pre></div></div>
+<p>This example is illustrative. It omits contract-specific domain separation and
+context binding that production code requires. Do not use it as-is.</p>
+<p>The <code>witness</code> keyword marks data that comes from private state, the local
+machine, not the ledger. <code>secretKey()</code> is never part of any transaction.
+<code>findAuthPath()</code> computes a Merkle path locally. None of this touches the
+chain.</p>
+<p>The contract uses <code>HistoricMerkleTree</code> rather than a plain <code>MerkleTree</code>. The
+distinction matters for privacy: a historic tree allows users to prove
+membership against a past root, not just the current one. Without it, every
+time a new member is added to the tree, all existing members would need to
+regenerate their proofs against the new root. The historic variant makes
+membership proofs stable across insertions.</p>
+<p>What touches the chain is the nullifier, via <code>disclose()</code>. The nullifier is a
+one-way derivative of the secret key. Knowing the nullifier reveals nothing
+about the key. Its presence in the public nullifier set proves this key has been
+used, without identifying which authorized key it was.</p>
+<p>Bitcoin developers will recognize the commitment/nullifier pattern immediately.
+It is structurally identical to what Midnight uses for shielded UTXO spending,
+which we covered in part one, and for good reason. It&#x27;s the same underlying
+primitive, applied here to application-level authorization rather than token
+ownership.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-disclose-operator-privacy-is-opt-out-not-opt-in">The disclose() operator: privacy is opt-out, not opt-in<a href="#the-disclose-operator-privacy-is-opt-out-not-opt-in" class="hash-link" aria-label="Direct link to The disclose() operator: privacy is opt-out, not opt-in" title="Direct link to The disclose() operator: privacy is opt-out, not opt-in" translate="no">​</a></h2>
+<p>In Bitcoin there is no equivalent of <code>disclose()</code> because there is no private
+state to disclose from. Everything is already public. The question of what to
+reveal doesn&#x27;t arise at the protocol level.</p>
+<p>In Midnight, <code>disclose()</code> is the explicit gate between private and public. Any
+value that starts in private context, a circuit parameter, a witness value, a
+locally computed result, cannot be written to the public ledger without passing
+through <code>disclose()</code>. The compiler enforces this. Attempting to assign a private
+value to a public ledger field without disclosing it is a compile error.</p>
+<div class="language-compact codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-compact codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">export ledger message: Opaque&lt;&quot;string&quot;&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export circuit storeMessage(newMessage: Opaque&lt;&quot;string&quot;&gt;): [] {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  // newMessage is private -- circuit parameters are private by default</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  message = disclose(newMessage);  // explicit transition to public</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span></code></pre></div></div>
+<p>This is not just a convention. The type system tracks privacy context. A value
+that has not been disclosed cannot flow into a public ledger write. The circuit
+cannot accidentally leak private data through a forgotten assignment. The
+compiler will catch it.</p>
+<p>For Bitcoin developers accustomed to everything being public by default, this
+inverts the mental model entirely. In Bitcoin you think about what to hide. In
+Midnight you think about what to reveal. The default state of any data in a
+Midnight circuit is private. Revealing it requires a deliberate act.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="commitments-and-hashes-as-the-bridge">Commitments and hashes as the bridge<a href="#commitments-and-hashes-as-the-bridge" class="hash-link" aria-label="Direct link to Commitments and hashes as the bridge" title="Direct link to Commitments and hashes as the bridge" translate="no">​</a></h2>
+<p>Sometimes a contract needs to reference private data in public state without
+revealing it. The standard approach is to store a commitment rather than the
+value itself.</p>
+<p>Compact&#x27;s standard library provides two primitives for this.</p>
+<p><code>persistentHash</code> hashes binary data. <code>persistentCommit</code> hashes arbitrary data
+together with a random blinding factor. The blinding factor matters. Without it,
+an observer who can guess the possible values of private data can hash each
+guess and check whether it matches the stored commitment. For data with a small
+domain, a binary vote, a small integer, a choice from a known list, the hash
+alone provides no real privacy. The blinding factor closes that attack.</p>
+<div class="language-compact codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-compact codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">// Vulnerable: observer can try all possible votes</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export ledger voteCommitment: Bytes&lt;32&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">circuit commitVote(vote: Boolean): Bytes&lt;32&gt; {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  return persistentHash&lt;Boolean&gt;(vote);  // brute-forceable</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">// Sound: blinding factor prevents enumeration</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">witness blindingFactor(): Bytes&lt;32&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">circuit commitVote(vote: Boolean): Bytes&lt;32&gt; {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  return persistentCommit&lt;Boolean&gt;(vote, blindingFactor());</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span></code></pre></div></div>
+<p>The blinding factor must come from private state. If it were public, it would
+just shift the enumeration attack to the blinding factor. This is a subtle
+failure mode that Midnight&#x27;s docs flag explicitly, and it&#x27;s the kind of thing
+that bites developers coming from systems where the question doesn&#x27;t arise
+because everything is already public.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="shielded-vs-unshielded-tokens-a-design-decision-not-a-fixed-property">Shielded vs unshielded tokens: a design decision, not a fixed property<a href="#shielded-vs-unshielded-tokens-a-design-decision-not-a-fixed-property" class="hash-link" aria-label="Direct link to Shielded vs unshielded tokens: a design decision, not a fixed property" title="Direct link to Shielded vs unshielded tokens: a design decision, not a fixed property" translate="no">​</a></h2>
+<p>In Bitcoin, all transactions are public. There is no per-transaction privacy
+setting. The UTXO is either spent or not. The amount is visible. The addresses
+are visible.</p>
+<p>In Midnight, token privacy is a choice made at the application and transaction
+level. NIGHT tokens can be shielded or unshielded. The same token can move
+between shielded and unshielded states. A contract can receive shielded tokens,
+process them privately, and emit unshielded tokens, or the reverse. This is
+not a workaround. It is the intended design.</p>
+<p>Unshielded tokens behave like Bitcoin UTXOs: amounts and addresses are
+transparent, visible on-chain, verifiable by anyone. They are appropriate for
+any scenario requiring auditability: exchange listings, public treasuries,
+compliance-visible payments.</p>
+<p>Shielded tokens use the nullifier/commitment scheme from part one. Amounts and
+ownership are hidden. The proof enforces conservation under the assumptions of
+the circuit and proof system, but an observer cannot determine who sent what
+to whom or how much moved.</p>
+<p>Midnight also provides viewing keys. A shielded transaction can be made
+selectively auditable by creating a viewing key and sharing it with an
+authorized party: a regulator, an auditor, a counterparty. Viewing keys are
+derived from the spending key, so the user retains full control over who can
+see what. The viewing key allows the holder to view the transaction&#x27;s private
+details as defined by the protocol, without enabling them to spend the
+underlying tokens. Full privacy by default, selective disclosure by choice.</p>
+<p>Bitcoin does not provide an equivalent mechanism natively at the protocol level.
+Taproot and silent payments improve privacy against passive chain analysis, but
+they do not provide selective disclosure to a specific authorized viewer without
+also exposing the data to everyone. Midnight&#x27;s viewing key is a fundamentally
+different capability.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-you-lose-the-auditability-tradeoff">What you lose: the auditability tradeoff<a href="#what-you-lose-the-auditability-tradeoff" class="hash-link" aria-label="Direct link to What you lose: the auditability tradeoff" title="Direct link to What you lose: the auditability tradeoff" translate="no">​</a></h2>
+<p>Bitcoin&#x27;s transparency is also its strongest auditability story. Anyone can
+verify the supply cap. Anyone can trace any coin from genesis. Anyone can
+confirm that no inflation occurred. The chain is self-evidently correct to any
+observer with the full chain and the validation rules.</p>
+<p>Midnight&#x27;s privacy model splits this auditability into two distinct properties.
+Supply conservation is still verifiable: the proof enforces conservation under
+the assumptions of the circuit and proof system. Transaction traceability is
+not: an outside observer cannot determine who sent what to whom, what amounts
+moved, or what path value took through the system. The what is preserved. The
+who and how are not.</p>
+<p>For Bitcoin developers who treat transparent auditability as a core security
+property, this is a real tradeoff and worth naming honestly. Midnight&#x27;s answer
+is that the ZK proof provides cryptographic assurance for supply integrity
+rather than observational transparency. Whether you find that satisfying depends
+on your threat model and your trust in the underlying cryptographic assumptions.</p>
+<p>The supply cap is still enforced. Value conservation is still enforced. But the
+path that value took to get where it is may be permanently private. That&#x27;s the
+privacy guarantee working as intended. It&#x27;s also the thing a Bitcoin maximalist
+will point to as a reason to be skeptical, and that skepticism is not
+unreasonable.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-to-take-away">What to take away<a href="#what-to-take-away" class="hash-link" aria-label="Direct link to What to take away" title="Direct link to What to take away" translate="no">​</a></h2>
+<p>Private state in Midnight is not a layer on top of a public system. It is a
+first-class part of the protocol, enforced at the type system level, stored
+locally, and not directly posted to the chain. The <code>disclose()</code> operator is the
+explicit boundary between private and public, and the compiler enforces it.
+Commitments, Merkle trees, and nullifiers are the toolkit for bridging the two
+state spaces without leaking information across them.</p>
+<p>Coming from Bitcoin, the deepest adjustment is not technical. It&#x27;s a shift in
+the default assumption. In Bitcoin, data starts public and privacy requires
+work. In Midnight, data starts private and publicity requires a deliberate act.
+Every API you design, every state variable you declare, every value you compute
+in a circuit: the first question is not &quot;how do I protect this?&quot; but &quot;does
+this need to be revealed at all, and to whom?&quot;</p>
+<p><a class="" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust">Part 3</a> covers the NIGHT/DUST economic
+model, a resource constraint mechanism that is superficially similar to
+Bitcoin&#x27;s fee market but designed around completely different principles, with
+very different implications for application cost predictability.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/rxbryan/blockchains-from-bitcoin-perspective/edit/main/docs/midnight-for-bitcoin-devs/private-state.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">The UTXO Model Through Bitcoin Eyes</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">NIGHT/DUST vs the Bitcoin Fee Market</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#the-two-ledger-model" class="table-of-contents__link toc-highlight">The two-ledger model</a></li><li><a href="#what-private-state-actually-contains" class="table-of-contents__link toc-highlight">What private state actually contains</a></li><li><a href="#the-disclose-operator-privacy-is-opt-out-not-opt-in" class="table-of-contents__link toc-highlight">The disclose() operator: privacy is opt-out, not opt-in</a></li><li><a href="#commitments-and-hashes-as-the-bridge" class="table-of-contents__link toc-highlight">Commitments and hashes as the bridge</a></li><li><a href="#shielded-vs-unshielded-tokens-a-design-decision-not-a-fixed-property" class="table-of-contents__link toc-highlight">Shielded vs unshielded tokens: a design decision, not a fixed property</a></li><li><a href="#what-you-lose-the-auditability-tradeoff" class="table-of-contents__link toc-highlight">What you lose: the auditability tradeoff</a></li><li><a href="#what-to-take-away" class="table-of-contents__link toc-highlight">What to take away</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Oracle Trust Models</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/overview">Overview</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/trust-models">Trust Models</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/oracles-in-bitcoin">Oracles in Bitcoin</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/encoding-external-events">Encoding External Events</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/failure-modes-and-tradeoffs">Failure Modes</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Midnight for Bitcoin Devs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro">Introduction</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model">UTXO Model</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state">Private State</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust">NIGHT/DUST</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits">Compact Circuits</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Author</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/rxbryan" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://medium.com/@bryanelee62" target="_blank" rel="noopener noreferrer" class="footer__link-item">Medium<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://www.linkedin.com/in/rxbryan" target="_blank" rel="noopener noreferrer" class="footer__link-item">LinkedIn<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Bryan Elee Atonye. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

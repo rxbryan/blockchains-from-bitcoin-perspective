@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-midnight-for-bitcoin-devs/compact-circuits" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">Compact Circuits vs Bitcoin Script | Blockchains from a Bitcoin Perspective</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" property="og:image" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/img/og-card.png"><meta data-rh="true" name="twitter:image" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/img/og-card.png"><meta data-rh="true" property="og:url" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="og:type" content="website"><meta data-rh="true" name="og:title" content="Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="og:description" content="Technical analysis of blockchain systems written from the perspective of a Bitcoin protocol developer. Covers oracle trust models, Midnight Network, UTXO mechanics, ZK proofs, and more."><meta data-rh="true" name="og:url" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" name="twitter:title" content="Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="twitter:description" content="Technical analysis of blockchain systems written from the perspective of a Bitcoin protocol developer."><meta data-rh="true" name="keywords" content="bitcoin, blockchain, midnight network, oracle, utxo, zero knowledge proofs, compact, bitcoin script, dlc, chainlink"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Compact Circuits vs Bitcoin Script | Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="description" content="Part 4 of 4: Midnight for Bitcoin Developers"><meta data-rh="true" property="og:description" content="Part 4 of 4: Midnight for Bitcoin Developers"><link data-rh="true" rel="icon" href="/blockchains-from-bitcoin-perspective/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits"><link data-rh="true" rel="alternate" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits" hreflang="en"><link data-rh="true" rel="alternate" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Compact Circuits vs Bitcoin Script","item":"https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits"}]}</script><link rel="stylesheet" href="/blockchains-from-bitcoin-perspective/assets/css/styles.108627a8.css">
+<script src="/blockchains-from-bitcoin-perspective/assets/js/runtime~main.729a389d.js" defer="defer"></script>
+<script src="/blockchains-from-bitcoin-perspective/assets/js/main.dc819c2a.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/blockchains-from-bitcoin-perspective/"><b class="navbar__title text--truncate">Blockchains from a Bitcoin Perspective</b></a><a class="navbar__item navbar__link" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/overview">Oracle Trust Models</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro">Midnight for Bitcoin Devs</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/rxbryan/blockchains-from-bitcoin-perspective" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--active"><span title="Midnight for Bitcoin Developers" class="categoryLinkLabel_W154">Midnight for Bitcoin Developers</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model"><span title="The UTXO Model Through Bitcoin Eyes" class="linkLabel_WmDU">The UTXO Model Through Bitcoin Eyes</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"><span title="Private State vs Public UTXO" class="linkLabel_WmDU">Private State vs Public UTXO</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"><span title="NIGHT/DUST vs the Bitcoin Fee Market" class="linkLabel_WmDU">NIGHT/DUST vs the Bitcoin Fee Market</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits"><span title="Compact Circuits vs Bitcoin Script" class="linkLabel_WmDU">Compact Circuits vs Bitcoin Script</span></a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/blockchains-from-bitcoin-perspective/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Midnight for Bitcoin Developers</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Compact Circuits vs Bitcoin Script</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Compact Circuits vs Bitcoin Script</h1></header>
+<p><em>Part 4 of 4: Midnight for Bitcoin Developers</em></p>
+<hr>
+<p>Bitcoin Script is not a programming language in the conventional sense. It has
+no loops. It has no recursion. It cannot call external functions. It cannot read
+chain state beyond the UTXO being spent. It cannot store intermediate values
+between transactions. Every one of these constraints is intentional, and every
+one of them is a security property.</p>
+<p>The constraints exist because Bitcoin&#x27;s threat model includes the validator. A
+validator running an unbounded computation is a denial-of-service vector. A
+script that reads arbitrary chain state creates ordering dependencies that break
+the UTXO model&#x27;s parallelism. Loops create halting problem risks. Recursion
+creates stack overflow risks. The Turing-incompleteness of Bitcoin Script is not
+a limitation of ambition. It&#x27;s an explicit design goal, chosen to make
+validation cheap, predictable, and safe.</p>
+<p>Compact circuits are not subject to the same constraints. They can express
+arbitrarily complex computation, but only within fixed bounds determined at
+compile time. They are capable of reading private local state and can implement
+complex control flow including conditionals and function calls. They are compiled
+to ZK circuits before deployment, which means the computational bounds are fixed
+at compile time rather than determined at runtime.</p>
+<p>This article is not going to argue that Compact is better than Bitcoin Script.
+It is going to explain precisely what each can express, where the boundaries
+are, and what a Bitcoin developer needs to understand about the difference.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-bitcoin-script-actually-does-well">What Bitcoin Script actually does well<a href="#what-bitcoin-script-actually-does-well" class="hash-link" aria-label="Direct link to What Bitcoin Script actually does well" title="Direct link to What Bitcoin Script actually does well" translate="no">​</a></h2>
+<p>Before comparing, it&#x27;s worth being precise about what Bitcoin Script is
+optimized for, because the comparison only makes sense in context.</p>
+<p>Bitcoin Script&#x27;s primary job is to express spending conditions on UTXOs. It
+answers one question: given these inputs, is this UTXO authorized to be spent?
+The conditions it can express cleanly are:</p>
+<p>Single signature — check that a provided signature validates against a known
+public key:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">OP_DUP OP_HASH160 &lt;pubKeyHash&gt; OP_EQUALVERIFY OP_CHECKSIG</span><br></span></code></pre></div></div>
+<p>Multisig — check that M of N provided signatures validate:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">OP_2 &lt;pubKey1&gt; &lt;pubKey2&gt; &lt;pubKey3&gt; OP_3 OP_CHECKMULTISIG</span><br></span></code></pre></div></div>
+<p>Hash preimage — check that a provided value hashes to a known commitment:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">OP_SHA256 &lt;hash&gt; OP_EQUAL</span><br></span></code></pre></div></div>
+<p>Timelock — check that the transaction is not broadcast before a specified
+block height or timestamp:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">&lt;locktime&gt; OP_CHECKLOCKTIMEVERIFY OP_DROP OP_DUP OP_HASH160 ...</span><br></span></code></pre></div></div>
+<p>Taproot allows more complex spending conditions through script trees, but the
+individual leaf scripts are still constrained to the same primitive set.
+Miniscript formalizes the composition of these primitives into a policy language
+with provable security properties and analyzable spending complexity.</p>
+<p>All of these conditions share a property: they can be verified in bounded time
+with bounded computation. A validator executing any valid Bitcoin Script knows
+it will terminate and knows approximately how expensive it will be before
+starting. This is not an accident.</p>
+<p>What Bitcoin Script cannot do is equally important to understand. It cannot
+verify that a signature was made under a particular private key that also
+satisfies some other property. The verification happens against a public key,
+and the relationship between the private key and any other data is opaque to the
+script. It cannot read the values of other UTXOs during validation. It cannot
+carry application state from one transaction to the next without encoding it in
+the script itself or in an OP_RETURN output. It cannot implement a loop. It
+cannot call a function defined elsewhere.</p>
+<p>These are not bugs. They are the surface area of what Bitcoin Script is designed
+to do, drawn deliberately small.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-a-compact-circuit-is">What a Compact circuit is<a href="#what-a-compact-circuit-is" class="hash-link" aria-label="Direct link to What a Compact circuit is" title="Direct link to What a Compact circuit is" translate="no">​</a></h2>
+<p>A Compact circuit is a function that compiles to a zero-knowledge circuit. It
+takes public inputs, private inputs (witnesses), and produces public outputs and
+a ZK proof that the computation was performed correctly.</p>
+<p>The structure of a Compact contract has three distinct contexts:</p>
+<div class="language-compact codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-compact codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">pragma language_version 0.22;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">import CompactStandardLibrary;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">// 1. Ledger: public on-chain state</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export ledger authority: Bytes&lt;32&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export ledger value: Uint&lt;64&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export ledger state: State;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export ledger round: Counter;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">// 2. Witness: private local state, from the user&#x27;s machine</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">witness secretKey(): Bytes&lt;32&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">// 3. Circuit: the computation that bridges them</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export circuit set(v: Uint&lt;64&gt;): [] {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  assert(state == State.UNSET, &quot;Attempted to set initialized value&quot;);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  const sk = secretKey();           // reads from private local state</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  const pk = publicKey(round, sk);  // computes locally, never posted</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  authority = disclose(pk);         // explicitly transitions to public</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  value = disclose(v);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  state = State.SET;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span></code></pre></div></div>
+<p>The <code>witness</code> keyword marks data that comes from the user&#x27;s local machine and
+never appears in any transaction. The circuit computes over both public ledger
+state and private witness data. The <code>disclose()</code> operator is the explicit
+boundary. Only values that pass through <code>disclose()</code> can be written to the
+public ledger. The compiler enforces this at the type level.</p>
+<p>For a Bitcoin Script developer, the closest mental model is this: imagine a
+Bitcoin Script that could verify not just &quot;does this signature validate against
+this public key&quot; but &quot;does this secret key, which I will never reveal, hash to
+this public key AND satisfy this additional predicate that involves data I&#x27;m
+also not going to reveal?&quot; The ZK proof provides exactly that capability. The
+circuit verifies the computation. The proof certifies it happened correctly.
+Neither the secret key nor the private predicate inputs ever appear on-chain.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="fixed-bounds-at-compile-time-not-at-runtime">Fixed bounds at compile time, not at runtime<a href="#fixed-bounds-at-compile-time-not-at-runtime" class="hash-link" aria-label="Direct link to Fixed bounds at compile time, not at runtime" title="Direct link to Fixed bounds at compile time, not at runtime" translate="no">​</a></h2>
+<p>Compact circuits can express arbitrarily complex computation, but only within
+fixed bounds determined at compile time. This is a critical distinction from
+both Bitcoin Script and Ethereum&#x27;s runtime model.</p>
+<p>In Ethereum, expressiveness at runtime means validators must execute arbitrary
+Solidity bytecode, which requires gas limits to prevent infinite loops. The gas
+limit is a runtime mechanism that caps computation per transaction. Bitcoin
+avoids this entirely by making the language Turing-incomplete. There is nothing
+to bound because loops don&#x27;t exist.</p>
+<p>Compact takes a third path. The circuit is fixed at compile time. The verifier
+key is derived from the compiled circuit and stored on-chain. The circuit cannot
+change after deployment. Any loops or recursion in the Compact source code are
+unrolled at compile time into a fixed-size circuit with a fixed number of
+constraints. If your circuit has a loop that runs N times, the compiler produces
+N copies of the loop body as circuit constraints. The validator verifies a proof
+against this fixed circuit and does not execute anything.</p>
+<p>The practical consequence: circuit complexity is bounded at compile time, not
+capped at runtime. If you write a circuit that loops 10,000 times, the compiler
+produces a very large circuit with 10,000 unrolled constraint sets. Compilation
+takes longer. Proof generation takes longer. But validation cost does not scale
+with circuit complexity in the way execution-based systems do. Verifying a ZK
+proof is effectively constant cost regardless of what the circuit computes.</p>
+<p>This is different from Bitcoin Script&#x27;s bounded computation and different from
+Ethereum&#x27;s gas-limited runtime computation. It&#x27;s a third model: arbitrary
+expressiveness at development time, fixed cost at validation time, with proof
+generation cost paid by the user who submits the transaction.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="witnesses-the-private-input-mechanism-bitcoin-script-doesnt-have">Witnesses: the private input mechanism Bitcoin Script doesn&#x27;t have<a href="#witnesses-the-private-input-mechanism-bitcoin-script-doesnt-have" class="hash-link" aria-label="Direct link to Witnesses: the private input mechanism Bitcoin Script doesn&#x27;t have" title="Direct link to Witnesses: the private input mechanism Bitcoin Script doesn&#x27;t have" translate="no">​</a></h2>
+<p>Bitcoin Script receives its inputs from the scriptSig or witness stack. These
+inputs are public. They appear in the transaction and are visible to all nodes.
+The script verifies them and either accepts or rejects the spend. There is no
+mechanism in Bitcoin Script for an input to be private.</p>
+<p>Compact&#x27;s <code>witness</code> mechanism is the native equivalent. A witness is a value
+that comes from the user&#x27;s local machine. The contract declares a witness but doesn&#x27;t implement it. The implementation is the job of the TypeScript DApp code running locally. The contract only cares about the type and how the value is used in the circuit:</p>
+<div class="language-compact codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-compact codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">// Declaration in contract — type only, no implementation</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">witness secretKey(): Bytes&lt;32&gt;;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">// Usage in circuit — the value is private, never in the transaction</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">export circuit clear(): [] {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  const sk = secretKey();</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  const pk = publicKey(round, sk);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  assert(authority == pk, &quot;not authorized&quot;);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  state = State.UNSET;</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  round.increment(1);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span></code></pre></div></div>
+<p>The TypeScript implementation that provides the witness value runs on the user&#x27;s
+machine before transaction submission:</p>
+<div class="language-typescript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-typescript codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token comment" style="color:#999988;font-style:italic">// TypeScript DApp code — provides the witness value locally</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">const</span><span class="token plain"> witnesses </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  secretKey</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token known-class-name class-name">Uint8Array</span><span class="token plain"> </span><span class="token arrow operator" style="color:#393A34">=&gt;</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token keyword control-flow" style="color:#00009f">return</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">loadSecretKeyFromLocalStorage</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<p>The secret key is read from local storage, used in the circuit computation,
+and never posted anywhere. The ZK proof certifies that whoever submitted this
+transaction knows a secret key whose hash matches the stored <code>authority</code> value.
+The key itself is not recoverable from the proof.</p>
+<p>Because witness generation lives entirely in client code, different
+implementations may produce different valid witnesses for the same logical
+action. The contract will accept any that satisfy the circuit constraints, which
+can lead to inconsistencies across clients if witness generation is not carefully
+standardized. This is a real-world failure mode that Bitcoin developers won&#x27;t
+encounter with Script, where the inputs are fully specified by the locking
+condition itself.</p>
+<p>For Bitcoin developers who have implemented Miniscript policies: the witness
+mechanism generalizes what Miniscript does with spending conditions. Miniscript
+formalizes which keys and preimages must be provided. Compact witnesses
+generalize this to arbitrary private data, not just signatures and preimages,
+but any local value the circuit needs to compute over, including Merkle paths,
+private state, application-specific secrets.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-round-counter-linkability-prevention-bitcoin-script-ignores">The round counter: linkability prevention Bitcoin Script ignores<a href="#the-round-counter-linkability-prevention-bitcoin-script-ignores" class="hash-link" aria-label="Direct link to The round counter: linkability prevention Bitcoin Script ignores" title="Direct link to The round counter: linkability prevention Bitcoin Script ignores" translate="no">​</a></h2>
+<p>The contract example above includes a <code>round</code> counter that is incremented on
+each <code>clear</code> operation. Its purpose is not functional. It&#x27;s privacy.</p>
+<p>Without the round counter, the <code>publicKey</code> computation would produce the same
+hash for the same secret key every time. An observer watching the ledger could
+see that <code>authority</code> contains the same value in two different rounds and
+conclude they were set by the same user. No information about the secret key is
+leaked, but linkability between rounds is.</p>
+<p>With the round counter included:</p>
+<div class="language-compact codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-compact codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">circuit publicKey(round: Field, sk: Bytes&lt;32&gt;): Bytes&lt;32&gt; {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  return persistentHash&lt;Vector&lt;3, Bytes&lt;32&gt;&gt;&gt;(</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    [pad(32, &quot;midnight:examples:lock:pk&quot;), round as Bytes&lt;32&gt;, sk]);</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span></code></pre></div></div>
+<p>Different rounds produce different public keys even for the same secret key.
+The rounds are unlinkable by an on-chain observer. The user is re-pseudonymized
+on each interaction. This pattern improves unlinkability, but introduces
+additional state management and requires careful coordination in multi-user
+contracts to avoid race conditions around the counter.</p>
+<p>Different rounds produce different public keys even for the same secret key. The rounds are unlinkable by an on-chain observer. The tradeoff is real though: the round counter adds state to
+manage and creates coordination complexity in contracts where multiple
+users interact with the same counter simultaneously.</p>
+<p>Bitcoin Script sidesteps this entirely because it has no persistent state.
+Each spend is independent. If you want unlinkability in
+Bitcoin, you use separate keys for separate transactions, a well-established
+privacy practice but one implemented at the wallet layer, not the script layer.
+In Midnight, unlinkability is a contract-level concern, and the pattern for
+achieving it is encoded directly in the circuit logic.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-compact-cannot-do-that-bitcoin-script-takes-for-granted">What Compact cannot do that Bitcoin Script takes for granted<a href="#what-compact-cannot-do-that-bitcoin-script-takes-for-granted" class="hash-link" aria-label="Direct link to What Compact cannot do that Bitcoin Script takes for granted" title="Direct link to What Compact cannot do that Bitcoin Script takes for granted" translate="no">​</a></h2>
+<p>Compact circuits have meaningful constraints that Bitcoin developers will notice.</p>
+<p><strong>No introspection of other contracts during circuit execution.</strong> A Compact
+circuit operates on the contract&#x27;s own ledger state and the witness values
+provided locally. At present, circuits cannot read external contract state
+during execution. Cross-contract interaction is an active area of development.</p>
+<p><strong>No runtime dynamism in circuit structure.</strong> Because circuits are compiled to
+fixed constraint sets, the structure of computation must be known at compile
+time. You cannot write a circuit that decides at runtime whether to perform 10
+iterations or 100. You must write two circuits, or bound the iteration at a
+fixed maximum and use conditional logic within the fixed bounds.</p>
+<p><strong>Proof generation time is not free.</strong> Bitcoin Script execution is
+near-instantaneous. Compact circuit execution, proof generation, runs on the
+user&#x27;s machine and takes seconds to minutes depending on circuit complexity. For
+applications with real-time interaction requirements, proof generation latency
+is a design constraint that Bitcoin developers don&#x27;t face.</p>
+<p><strong>The security model of witnesses depends on local implementation.</strong> The
+contract only specifies that a witness has a certain type. The contract has no
+way to verify that the TypeScript implementation of the witness is doing the
+right thing. It only verifies that the value produced satisfies the circuit
+constraints. The user must trust their own DApp implementation to produce
+correct witness values. Beyond correctness, private state cannot be audited
+from on-chain data alone, which makes debugging subtly wrong witness behavior
+harder than debugging a misbehaving Bitcoin Script.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-security-comparison-simplicity-vs-expressiveness">The security comparison: simplicity vs expressiveness<a href="#the-security-comparison-simplicity-vs-expressiveness" class="hash-link" aria-label="Direct link to The security comparison: simplicity vs expressiveness" title="Direct link to The security comparison: simplicity vs expressiveness" translate="no">​</a></h2>
+<p>Bitcoin Script&#x27;s security case rests on simplicity. A small opcode set means a
+small attack surface. Formal analysis tools like Miniscript can exhaustively
+analyze the spending conditions of any script. The behavior of any Bitcoin
+Script is fully determined by public inputs, fully auditable, and
+straightforwardly verifiable.</p>
+<p>Compact&#x27;s security case rests on cryptographic assumptions and compiler
+correctness. The ZK proof guarantees that the circuit ran correctly, but that
+guarantee is only as strong as the underlying proof system. The circuit itself
+must be written correctly. Bugs in the circuit logic are equivalent to bugs in
+a smart contract, with the added complexity that some of the logic operates over
+private state that cannot be audited from on-chain data alone.</p>
+<p>The trusted setup question is worth naming directly. ZK-SNARK systems require
+a trusted setup ceremony to generate the proving parameters. If the setup is
+compromised and toxic waste is retained, it becomes possible to forge proofs.
+Midnight uses a universal SRS (structured reference string) to mitigate this,
+which requires trusting the setup of the universal parameters rather than
+per-circuit setups. The security argument is strong but it is a cryptographic
+argument, not an observational one. Bitcoin&#x27;s security arguments are largely
+observational. You can verify them by running the code.</p>
+<p>This is not a reason to dismiss Compact. It&#x27;s a reason to understand the
+different trust foundation. Bitcoin Script says: anyone can verify this.
+Compact says: cryptographic proofs attest that this computation was executed
+correctly. Both are valid security properties. They require different
+verification approaches and rest on different assumptions.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-to-take-away">What to take away<a href="#what-to-take-away" class="hash-link" aria-label="Direct link to What to take away" title="Direct link to What to take away" translate="no">​</a></h2>
+<p>Bitcoin Script is deliberately narrow. It solves the spending condition problem
+with a minimal surface area and makes that surface amenable to formal analysis.
+The narrowness is the point.</p>
+<p>Compact circuits are deliberately expressive. They can operate over private
+inputs, implement complex control flow, carry state across rounds, and express
+spending conditions that have no Bitcoin Script equivalent. The expressiveness
+is the point.</p>
+<p>The tradeoffs follow directly. Script&#x27;s narrowness means simplicity,
+auditability, and validation that requires no cryptographic assumptions.
+Compact&#x27;s expressiveness means proof generation cost, compiler trust,
+cryptographic assumptions, and a larger surface area for subtle bugs in circuit
+logic.</p>
+<p>Neither is universally superior. For verifying that a signature matches a key,
+Bitcoin Script is overkill in the good direction. It does exactly what&#x27;s needed
+with no excess complexity. For verifying that a user holds a secret key that
+also satisfies a complex application-level predicate over private data, Bitcoin
+Script cannot do it at all. Compact can.</p>
+<p>The question for a Bitcoin developer evaluating Midnight is not whether Compact
+is better than Bitcoin Script. It&#x27;s whether the applications you want to build
+require the expressiveness Compact offers, and whether you&#x27;re comfortable with
+the different trust model that expressiveness requires.</p>
+<hr>
+<p><em>This is the fourth and final article in the Midnight for Bitcoin Developers
+series. The complete series covers the <a class="" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model">UTXO model</a>,
+<a class="" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state">private state</a>,
+the <a class="" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust">NIGHT/DUST economic model</a>,
+and Compact circuits.</em></p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/rxbryan/blockchains-from-bitcoin-perspective/edit/main/docs/midnight-for-bitcoin-devs/compact-circuits.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">NIGHT/DUST vs the Bitcoin Fee Market</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#what-bitcoin-script-actually-does-well" class="table-of-contents__link toc-highlight">What Bitcoin Script actually does well</a></li><li><a href="#what-a-compact-circuit-is" class="table-of-contents__link toc-highlight">What a Compact circuit is</a></li><li><a href="#fixed-bounds-at-compile-time-not-at-runtime" class="table-of-contents__link toc-highlight">Fixed bounds at compile time, not at runtime</a></li><li><a href="#witnesses-the-private-input-mechanism-bitcoin-script-doesnt-have" class="table-of-contents__link toc-highlight">Witnesses: the private input mechanism Bitcoin Script doesn&#39;t have</a></li><li><a href="#the-round-counter-linkability-prevention-bitcoin-script-ignores" class="table-of-contents__link toc-highlight">The round counter: linkability prevention Bitcoin Script ignores</a></li><li><a href="#what-compact-cannot-do-that-bitcoin-script-takes-for-granted" class="table-of-contents__link toc-highlight">What Compact cannot do that Bitcoin Script takes for granted</a></li><li><a href="#the-security-comparison-simplicity-vs-expressiveness" class="table-of-contents__link toc-highlight">The security comparison: simplicity vs expressiveness</a></li><li><a href="#what-to-take-away" class="table-of-contents__link toc-highlight">What to take away</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Oracle Trust Models</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/overview">Overview</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/trust-models">Trust Models</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/oracles-in-bitcoin">Oracles in Bitcoin</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/encoding-external-events">Encoding External Events</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/failure-modes-and-tradeoffs">Failure Modes</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Midnight for Bitcoin Devs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro">Introduction</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model">UTXO Model</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state">Private State</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust">NIGHT/DUST</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits">Compact Circuits</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Author</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/rxbryan" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://medium.com/@bryanelee62" target="_blank" rel="noopener noreferrer" class="footer__link-item">Medium<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://www.linkedin.com/in/rxbryan" target="_blank" rel="noopener noreferrer" class="footer__link-item">LinkedIn<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Bryan Elee Atonye. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

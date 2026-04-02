@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-midnight-for-bitcoin-devs/night-dust" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">NIGHT/DUST vs the Bitcoin Fee Market | Blockchains from a Bitcoin Perspective</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" property="og:image" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/img/og-card.png"><meta data-rh="true" name="twitter:image" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/img/og-card.png"><meta data-rh="true" property="og:url" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="og:type" content="website"><meta data-rh="true" name="og:title" content="Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="og:description" content="Technical analysis of blockchain systems written from the perspective of a Bitcoin protocol developer. Covers oracle trust models, Midnight Network, UTXO mechanics, ZK proofs, and more."><meta data-rh="true" name="og:url" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" name="twitter:title" content="Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="twitter:description" content="Technical analysis of blockchain systems written from the perspective of a Bitcoin protocol developer."><meta data-rh="true" name="keywords" content="bitcoin, blockchain, midnight network, oracle, utxo, zero knowledge proofs, compact, bitcoin script, dlc, chainlink"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="NIGHT/DUST vs the Bitcoin Fee Market | Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="description" content="Part 3 of 4: Midnight for Bitcoin Developers"><meta data-rh="true" property="og:description" content="Part 3 of 4: Midnight for Bitcoin Developers"><link data-rh="true" rel="icon" href="/blockchains-from-bitcoin-perspective/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"><link data-rh="true" rel="alternate" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust" hreflang="en"><link data-rh="true" rel="alternate" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"NIGHT/DUST vs the Bitcoin Fee Market","item":"https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"}]}</script><link rel="stylesheet" href="/blockchains-from-bitcoin-perspective/assets/css/styles.108627a8.css">
+<script src="/blockchains-from-bitcoin-perspective/assets/js/runtime~main.729a389d.js" defer="defer"></script>
+<script src="/blockchains-from-bitcoin-perspective/assets/js/main.dc819c2a.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/blockchains-from-bitcoin-perspective/"><b class="navbar__title text--truncate">Blockchains from a Bitcoin Perspective</b></a><a class="navbar__item navbar__link" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/overview">Oracle Trust Models</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro">Midnight for Bitcoin Devs</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/rxbryan/blockchains-from-bitcoin-perspective" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--active"><span title="Midnight for Bitcoin Developers" class="categoryLinkLabel_W154">Midnight for Bitcoin Developers</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model"><span title="The UTXO Model Through Bitcoin Eyes" class="linkLabel_WmDU">The UTXO Model Through Bitcoin Eyes</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"><span title="Private State vs Public UTXO" class="linkLabel_WmDU">Private State vs Public UTXO</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"><span title="NIGHT/DUST vs the Bitcoin Fee Market" class="linkLabel_WmDU">NIGHT/DUST vs the Bitcoin Fee Market</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits"><span title="Compact Circuits vs Bitcoin Script" class="linkLabel_WmDU">Compact Circuits vs Bitcoin Script</span></a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/blockchains-from-bitcoin-perspective/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Midnight for Bitcoin Developers</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">NIGHT/DUST vs the Bitcoin Fee Market</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>NIGHT/DUST vs the Bitcoin Fee Market</h1></header>
+<p><em>Part 3 of 4: Midnight for Bitcoin Developers</em></p>
+<hr>
+<p>Bitcoin&#x27;s fee market is one of the most elegant and most brutal mechanisms in
+cryptosystems. Elegant because it requires no central coordination. Fees emerge
+from the interaction of miners optimizing for revenue and users competing for
+block space. Brutal because it is entirely indifferent to your application&#x27;s
+cost model. Whatever you planned to charge users for a transaction, the mempool
+will occasionally charge three times that, and occasionally ten times, and
+occasionally less than you expected, and there is nothing you can do about any
+of it.</p>
+<p>If you&#x27;ve shipped a Bitcoin application that involves transaction fees paid by
+users, you have already solved the problem of explaining to a non-technical user
+why the same action cost <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.50</mn><mi>y</mi><mi>e</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi><mi>d</mi><mi>a</mi><mi>y</mi><mi>a</mi><mi>n</mi><mi>d</mi></mrow><annotation encoding="application/x-tex">0.50 yesterday and </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em"></span><span class="mord">0.50</span><span class="mord mathnormal" style="margin-right:0.0359em">y</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.0278em">er</span><span class="mord mathnormal">d</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.0359em">y</span><span class="mord mathnormal">an</span><span class="mord mathnormal">d</span></span></span></span>8 today. The explanation involves
+miners, block space scarcity, fee estimation algorithms, and the emergent
+behavior of a decentralized market. It&#x27;s accurate. It&#x27;s also not something most
+users find acceptable.</p>
+<p>Midnight&#x27;s resource model is built on a different set of assumptions entirely.
+Understanding where those assumptions lead, and what they trade away to get
+there, is what this article is about.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="bitcoins-fee-market-how-it-actually-works">Bitcoin&#x27;s fee market: how it actually works<a href="#bitcoins-fee-market-how-it-actually-works" class="hash-link" aria-label="Direct link to Bitcoin&#x27;s fee market: how it actually works" title="Direct link to Bitcoin&#x27;s fee market: how it actually works" translate="no">​</a></h2>
+<p>Bitcoin block space is scarce by design. Blocks are capped at roughly 4 million
+weight units. Transactions compete for inclusion by attaching fees. Miners
+select transactions to maximize fee revenue per block, which in practice means
+selecting by fee rate, satoshis per virtual byte, rather than absolute fee
+amount. When block space demand exceeds supply, fee rates rise until enough
+marginal transactions become uneconomical to submit and the mempool clears.</p>
+<p>The fee a transaction pays is entirely disconnected from what the transaction
+does. A simple P2PKH send and a complex multisig settlement with multiple inputs
+and outputs differ in size, and therefore in fee at the same fee rate, but not
+in any way related to the computation they represent. Bitcoin Script execution
+is cheap enough that nodes don&#x27;t charge for it separately. The fee is purely a
+function of transaction weight.</p>
+<p>The emergent properties of this market are well understood. During low demand
+periods, fees approach the minimum relay threshold. During high demand periods,
+ordinals inscription waves, halving periods, mempool congestion events, fees
+spike rapidly and unpredictably. Applications that need reliable fee estimation
+use complex heuristics, maintain fee reserves, or implement Replace-By-Fee
+strategies to unstick transactions that become uneconomical at their original
+fee rate.</p>
+<p>For individual users transacting occasionally this is manageable, if annoying.
+For applications that need to submit transactions on predictable schedules at
+predictable costs, the fee market is a significant operational challenge. An
+enterprise application that needs to batch-settle transactions on a fixed
+schedule cannot predict its settlement cost a week in advance. A Lightning node
+that needs to force-close channels in time-sensitive situations cannot guarantee
+the fee rate will be reasonable when the force-close needs to happen.</p>
+<p>Bitcoin developers work around this. They batch transactions. They use
+fee-bumping via CPFP or RBF. They maintain fee reserves. They accept that the
+cost of their application is a variable they don&#x27;t fully control.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="nightdust-the-battery-model">NIGHT/DUST: the battery model<a href="#nightdust-the-battery-model" class="hash-link" aria-label="Direct link to NIGHT/DUST: the battery model" title="Direct link to NIGHT/DUST: the battery model" translate="no">​</a></h2>
+<p>Midnight separates network access from network payment in a way that has no
+Bitcoin equivalent.</p>
+<p>NIGHT is the capital asset. It&#x27;s a standard transferable token with a fixed
+supply of 24 billion. It&#x27;s publicly visible on-chain, tradeable on exchanges,
+and functions as the governance and staking token for the network. Holding NIGHT
+does not directly pay for transactions. What it does is generate DUST.</p>
+<p>DUST is not a token. It&#x27;s a shielded, non-transferable network resource that
+accumulates over time proportional to your NIGHT balance. The generation rate
+from the current protocol parameters is 5 DUST per NIGHT held, with a
+generation time to capacity of approximately one week. DUST pays for
+transactions. Once spent, it regenerates from the backing NIGHT balance. If you
+never spend your DUST, it accumulates to a cap and stays there. If you spend
+NIGHT, the associated DUST begins decaying linearly to zero.</p>
+<p>The whitepaper describes DUST&#x27;s value over time in four linear segments:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">1. Generating:     creation -&gt; capacity (based on NIGHT balance)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">2. Constant max:   at capacity, as long as backing NIGHT is unspent</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">3. Decaying:       from NIGHT spend until DUST value reaches zero</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">4. Constant zero:  forever after</span><br></span></code></pre></div></div>
+<p>The practical result for an application developer: as long as you hold NIGHT
+and don&#x27;t move it, you have predictable resource generation. That is not the
+same as fully predictable transaction throughput. Actual capacity depends on
+network pricing at the time of submission and the circuit complexity of your
+transactions. You don&#x27;t spend NIGHT to transact. You spend DUST, which
+regenerates. The cost model for a steady-state application is not &quot;how much
+does each transaction cost in token terms&quot; but &quot;how much NIGHT do I need to
+hold to sustain my transaction rate.&quot;</p>
+<p>This is a subscription model, not a pay-per-use model. You capitalize the
+access cost upfront by acquiring NIGHT, and then operate from the generated
+DUST. The Bitcoin fee market is explicitly pay-per-use, with the price set by
+real-time market conditions you don&#x27;t control.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="dust-is-itself-a-utxo">DUST is itself a UTXO<a href="#dust-is-itself-a-utxo" class="hash-link" aria-label="Direct link to DUST is itself a UTXO" title="Direct link to DUST is itself a UTXO" translate="no">​</a></h2>
+<p>This is the detail that Bitcoin developers will find most interesting and most
+surprising.</p>
+<p>DUST is not an account balance. It is not a number stored somewhere that gets
+decremented when you transact. DUST is a UTXO, following the same
+commitment/nullifier pattern described in parts one and two of this series.
+The protocol deterministically derives the spendable resource over time from
+NIGHT ownership, rather than through explicit minting transactions. No separate
+minting event is required.</p>
+<p>Each DUST UTXO has a commitment inserted into an append-only Merkle tree on
+creation, and a nullifier inserted into the nullifier set when spent. Spending
+DUST is a self-spend: one DUST UTXO in, one DUST UTXO out with the fee declared
+publicly in the transaction, because each spend consumes the entire UTXO and
+produces a new one. The input&#x27;s nullifier is posted. The output&#x27;s commitment is
+posted. The value of the new UTXO is the old value minus the fee.</p>
+<p>The protocol parameters governing this:</p>
+<div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">const</span><span class="token plain"> </span><span class="token constant" style="color:#36acaa">INITIAL_DUST_PARAMETERS</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token literal-property property" style="color:#36acaa">night_dust_ratio</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">5_000_000_000</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain">  </span><span class="token comment" style="color:#999988;font-style:italic">// 5 DUST per NIGHT</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token literal-property property" style="color:#36acaa">generation_decay_rate</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">8_267</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain">     </span><span class="token comment" style="color:#999988;font-style:italic">// ~1 week to capacity</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token literal-property property" style="color:#36acaa">dust_grace_period</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">3</span><span class="token plain"> hours</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain">       </span><span class="token comment" style="color:#999988;font-style:italic">// grace period before decay begins</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<p>The generation rate depends on how much NIGHT backs the DUST UTXO. The value
+grows linearly from zero to the capacity cap over approximately one week, stays
+at cap until the backing NIGHT is spent, then decays linearly to zero. The
+three-hour grace period means a short NIGHT movement doesn&#x27;t immediately destroy
+accumulated DUST. Spending during decay is permitted. The decay rate doesn&#x27;t
+change, but you can still use the remaining DUST before it reaches zero.</p>
+<p>Because DUST is a UTXO and each spend consumes the entire output, an application
+with a single DUST UTXO can only submit one transaction per block. The spend
+creates a new output that is not available until the next block. High-throughput
+applications need to plan their NIGHT UTXO topology deliberately, splitting
+NIGHT to create a pool of independent DUST UTXOs that can be spent in parallel,
+much like coin selection in Bitcoin wallet management.</p>
+<p>One edge case worth understanding: if you spend only part of your NIGHT, the
+change output creates a new NIGHT UTXO that starts fresh DUST generation from
+zero. The old DUST UTXO tied to the spent NIGHT begins decaying immediately.
+This is a non-obvious operational hazard. Moving NIGHT, even partially, resets
+generation on the resulting outputs. Applications that frequently rebalance
+funds can unintentionally destroy their steady-state DUST capacity.</p>
+<p>Each NIGHT UTXO generates DUST independently. If your application splits NIGHT
+across multiple wallets for security, or distributes it operationally, that
+independence matters. Consolidating NIGHT UTXOs restarts the generation period.
+Splitting them multiplies the generation sources but each at a lower rate. The
+total DUST capacity is proportional to total NIGHT held regardless of how it&#x27;s
+distributed, but the time-to-capacity depends on when each NIGHT UTXO last
+moved.</p>
+<p>This makes UTXO management an operational concern not just for value transfer,
+but for transaction capacity planning. Poor UTXO hygiene can degrade effective
+throughput even when total NIGHT holdings are unchanged.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="dynamic-pricing-what-happens-under-congestion">Dynamic pricing: what happens under congestion<a href="#dynamic-pricing-what-happens-under-congestion" class="hash-link" aria-label="Direct link to Dynamic pricing: what happens under congestion" title="Direct link to Dynamic pricing: what happens under congestion" translate="no">​</a></h2>
+<p>The DUST model provides cost predictability under normal conditions. What
+happens under load is more nuanced.</p>
+<p>Transaction fees in DUST have three components: a base fee, a variable
+congestion component, and a ZK proof cost. The congestion component is adjusted dynamically per block, based on current and previous block utilization. When blocks fill beyond the 50% target, fees rise and fall when utilization falls below that. The
+model looks at the trend across two blocks rather than just current utilization,
+which smooths out single-block spikes. Bitcoin developers will recognize this
+as similar in structure to EIP-1559&#x27;s base fee mechanism, with the difference
+that you pay in a resource you generated rather than a market-priced asset.</p>
+<p>In Bitcoin, the fee you pay is negotiated at submission time against all other
+pending transactions. In Midnight, the fee is determined by recent block
+utilization history at the time your transaction is included. You don&#x27;t bid
+against other transactions. You pay the current network rate. This means the
+exact fee is not fixed at submission time but derived at inclusion time based
+on recent network conditions. This does not eliminate contention. If demand
+exceeds available capacity, transactions may still be delayed, but pricing
+adjusts protocol-wide rather than through per-transaction bidding.</p>
+<p>The ZK proof component is worth noting separately. Generating a ZK proof has a
+computational cost that doesn&#x27;t exist in Bitcoin. That cost is paid by the user
+generating the proof on their machine, it&#x27;s time not money, but the
+transaction&#x27;s fee also reflects the verification cost that validators bear,
+which correlates with proof size and circuit complexity. Simple transfers sit
+at the lower end, seconds of generation time and modest proof size. Complex
+privacy logic involving full Zswap operations takes longer and costs more DUST.
+This is the Midnight equivalent of transaction weight in Bitcoin: circuit
+complexity scales the fee.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="dust-is-non-transferable-the-spam-prevention-mechanism">DUST is non-transferable: the spam prevention mechanism<a href="#dust-is-non-transferable-the-spam-prevention-mechanism" class="hash-link" aria-label="Direct link to DUST is non-transferable: the spam prevention mechanism" title="Direct link to DUST is non-transferable: the spam prevention mechanism" translate="no">​</a></h2>
+<p>In Bitcoin, anyone with BTC can submit any transaction at any fee rate. The fee
+market is the only spam prevention mechanism. During periods of low fees,
+submitting large volumes of low-value transactions is cheap, and the mempool can
+grow substantially.</p>
+<p>Midnight&#x27;s non-transferability of DUST is a different approach to the same
+problem. Because DUST cannot be purchased directly or transferred between
+wallets, accumulating large transaction capacity requires holding NIGHT for an
+extended period. You cannot buy a spike of DUST to spam the network with
+transactions. You can only generate DUST at the rate your NIGHT balance permits,
+up to the capacity cap.</p>
+<p>This does not eliminate spam. An attacker can accumulate NIGHT, hold it long
+enough to generate DUST capacity, and pre-generate proofs in advance. What the
+model does is raise both the capital cost and the computational cost relative
+to a pure fee market. Every shielded transaction requires generating a proof,
+which has real computational cost on the submitting machine. Submitting
+thousands of transactions per minute requires generating thousands of proofs per
+minute, which requires substantial computational resources beyond just the DUST
+balance.</p>
+<p>This two-layer spam resistance, DUST capacity limiting the sustained rate and
+proof generation cost limiting the burst rate, is more nuanced than Bitcoin&#x27;s
+single fee market mechanism. Whether it&#x27;s more robust in adversarial conditions
+is an open question that mainnet will eventually answer empirically.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="fee-sponsorship-and-the-capacity-marketplace">Fee sponsorship and the capacity marketplace<a href="#fee-sponsorship-and-the-capacity-marketplace" class="hash-link" aria-label="Direct link to Fee sponsorship and the capacity marketplace" title="Direct link to Fee sponsorship and the capacity marketplace" translate="no">​</a></h2>
+<p>Bitcoin has no native fee sponsorship mechanism. If a user can&#x27;t afford the fee,
+they can&#x27;t submit the transaction. Applications that want to pay fees on behalf
+of users require custodial architectures or complex off-chain coordination.</p>
+<p>Midnight builds fee sponsorship into the protocol design. A developer can
+delegate their generated DUST to pay for users&#x27; transactions, without
+transferring ownership of the underlying NIGHT. The application holds NIGHT,
+generates DUST, and sponsors transactions for users who have no NIGHT of their
+own. The user never needs to acquire or manage NIGHT. The developer absorbs the
+ledger cost. The user still generates the ZK proof on their own machine, so the
+computational cost of privacy stays with the user rather than the sponsor.</p>
+<p>This maps reasonably cleanly to Web2 freemium models: the service provider
+absorbs infrastructure costs and monetizes through other means. Bitcoin&#x27;s fee
+model has no equivalent. If you want to build a Bitcoin application with zero
+friction for end users around fees, you need custodial wallets, off-chain
+accounting, and significant infrastructure complexity to approximate what
+Midnight builds natively.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-honest-comparison">The honest comparison<a href="#the-honest-comparison" class="hash-link" aria-label="Direct link to The honest comparison" title="Direct link to The honest comparison" translate="no">​</a></h2>
+<p>Bitcoin&#x27;s fee market and Midnight&#x27;s NIGHT/DUST model are optimizing for
+different things.</p>
+<p>Bitcoin&#x27;s fee market optimizes for simplicity and neutrality. The mechanism
+requires no trusted parameter setter, no governance decision about what fees
+should be, no protocol-level distinction between types of users. The market
+sets the price and everyone pays it. The downside is volatility and
+unpredictability that makes certain application categories difficult to build.</p>
+<p>Midnight&#x27;s model optimizes for cost predictability and application developer
+experience. Holding NIGHT gives you predictable resource generation. You can
+plan your operational costs. You can sponsor users. The downside is that the
+model introduces protocol parameters, the NIGHT/DUST ratio, the generation
+rate, the congestion algorithm, that require governance decisions and can be
+changed. Fee stability is not just governed, it is dependent on governance
+behaving predictably. That is a different trust model than an emergent market
+where no single party controls the price.</p>
+<p>For Bitcoin developers who value the fee market&#x27;s neutrality and trustlessness,
+the fact that no one decides what fees should be, Midnight&#x27;s model is a step
+toward managed infrastructure. The parameters are set by the protocol, governed
+by token holders, and subject to change. That&#x27;s not wrong, but it&#x27;s a different
+kind of risk.</p>
+<p>For application developers who need to build products with predictable unit
+economics, Midnight&#x27;s model makes cost modeling closer to infrastructure
+planning than transaction pricing. The ability to hold NIGHT, generate DUST at
+a known rate, and sponsor users without custodial complexity is a genuine
+capability that Bitcoin doesn&#x27;t offer at the base layer.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-to-take-away">What to take away<a href="#what-to-take-away" class="hash-link" aria-label="Direct link to What to take away" title="Direct link to What to take away" translate="no">​</a></h2>
+<p>NIGHT and DUST separate capital from operational cost in a way Bitcoin doesn&#x27;t.
+Holding NIGHT is the capital expenditure. Generating DUST is the operational
+budget. Transactions spend DUST, which regenerates. The model is
+subscription-flavored rather than pay-per-use, and it&#x27;s designed explicitly for
+application developers who need predictable cost structures.</p>
+<p>DUST&#x27;s implementation as a UTXO following the commitment/nullifier paradigm
+means that even the fee resource inherits Midnight&#x27;s privacy properties. DUST
+spends are shielded. Your transaction throughput, timing, and fee payments are
+not publicly observable the way Bitcoin transaction fees are.</p>
+<p>The tradeoff is that cost predictability comes from protocol design rather than
+market emergence. The parameters that make DUST predictable are governable and
+changeable. Bitcoin developers who trust markets more than governance will find
+this uncomfortable. Application developers who need to ship products with
+predictable unit economics will find it useful.</p>
+<p><a class="" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits">Part 4</a> covers Compact circuits
+vs Bitcoin Script, an analysis written for developers who already know Script
+and want to understand what ZK circuits actually are, what they can express
+that Script cannot, and what they give up to get there.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/rxbryan/blockchains-from-bitcoin-perspective/edit/main/docs/midnight-for-bitcoin-devs/night-dust.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Private State vs Public UTXO</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Compact Circuits vs Bitcoin Script</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#bitcoins-fee-market-how-it-actually-works" class="table-of-contents__link toc-highlight">Bitcoin&#39;s fee market: how it actually works</a></li><li><a href="#nightdust-the-battery-model" class="table-of-contents__link toc-highlight">NIGHT/DUST: the battery model</a></li><li><a href="#dust-is-itself-a-utxo" class="table-of-contents__link toc-highlight">DUST is itself a UTXO</a></li><li><a href="#dynamic-pricing-what-happens-under-congestion" class="table-of-contents__link toc-highlight">Dynamic pricing: what happens under congestion</a></li><li><a href="#dust-is-non-transferable-the-spam-prevention-mechanism" class="table-of-contents__link toc-highlight">DUST is non-transferable: the spam prevention mechanism</a></li><li><a href="#fee-sponsorship-and-the-capacity-marketplace" class="table-of-contents__link toc-highlight">Fee sponsorship and the capacity marketplace</a></li><li><a href="#the-honest-comparison" class="table-of-contents__link toc-highlight">The honest comparison</a></li><li><a href="#what-to-take-away" class="table-of-contents__link toc-highlight">What to take away</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Oracle Trust Models</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/overview">Overview</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/trust-models">Trust Models</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/oracles-in-bitcoin">Oracles in Bitcoin</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/encoding-external-events">Encoding External Events</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/failure-modes-and-tradeoffs">Failure Modes</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Midnight for Bitcoin Devs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro">Introduction</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model">UTXO Model</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state">Private State</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust">NIGHT/DUST</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits">Compact Circuits</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Author</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/rxbryan" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://medium.com/@bryanelee62" target="_blank" rel="noopener noreferrer" class="footer__link-item">Medium<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://www.linkedin.com/in/rxbryan" target="_blank" rel="noopener noreferrer" class="footer__link-item">LinkedIn<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Bryan Elee Atonye. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-midnight-for-bitcoin-devs/utxo-model" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">The UTXO Model Through Bitcoin Eyes | Blockchains from a Bitcoin Perspective</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" property="og:image" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/img/og-card.png"><meta data-rh="true" name="twitter:image" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/img/og-card.png"><meta data-rh="true" property="og:url" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="og:type" content="website"><meta data-rh="true" name="og:title" content="Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="og:description" content="Technical analysis of blockchain systems written from the perspective of a Bitcoin protocol developer. Covers oracle trust models, Midnight Network, UTXO mechanics, ZK proofs, and more."><meta data-rh="true" name="og:url" content="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" name="twitter:title" content="Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="twitter:description" content="Technical analysis of blockchain systems written from the perspective of a Bitcoin protocol developer."><meta data-rh="true" name="keywords" content="bitcoin, blockchain, midnight network, oracle, utxo, zero knowledge proofs, compact, bitcoin script, dlc, chainlink"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="The UTXO Model Through Bitcoin Eyes | Blockchains from a Bitcoin Perspective"><meta data-rh="true" name="description" content="Part 1 of 4: Midnight for Bitcoin Developers"><meta data-rh="true" property="og:description" content="Part 1 of 4: Midnight for Bitcoin Developers"><link data-rh="true" rel="icon" href="/blockchains-from-bitcoin-perspective/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model"><link data-rh="true" rel="alternate" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model" hreflang="en"><link data-rh="true" rel="alternate" href="https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"The UTXO Model Through Bitcoin Eyes","item":"https://rxbryan.github.io/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model"}]}</script><link rel="stylesheet" href="/blockchains-from-bitcoin-perspective/assets/css/styles.108627a8.css">
+<script src="/blockchains-from-bitcoin-perspective/assets/js/runtime~main.729a389d.js" defer="defer"></script>
+<script src="/blockchains-from-bitcoin-perspective/assets/js/main.dc819c2a.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/blockchains-from-bitcoin-perspective/"><b class="navbar__title text--truncate">Blockchains from a Bitcoin Perspective</b></a><a class="navbar__item navbar__link" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/overview">Oracle Trust Models</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro">Midnight for Bitcoin Devs</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/rxbryan/blockchains-from-bitcoin-perspective" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--active"><span title="Midnight for Bitcoin Developers" class="categoryLinkLabel_W154">Midnight for Bitcoin Developers</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model"><span title="The UTXO Model Through Bitcoin Eyes" class="linkLabel_WmDU">The UTXO Model Through Bitcoin Eyes</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"><span title="Private State vs Public UTXO" class="linkLabel_WmDU">Private State vs Public UTXO</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust"><span title="NIGHT/DUST vs the Bitcoin Fee Market" class="linkLabel_WmDU">NIGHT/DUST vs the Bitcoin Fee Market</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits"><span title="Compact Circuits vs Bitcoin Script" class="linkLabel_WmDU">Compact Circuits vs Bitcoin Script</span></a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/blockchains-from-bitcoin-perspective/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Midnight for Bitcoin Developers</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">The UTXO Model Through Bitcoin Eyes</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Midnight&#x27;s UTXO Model Through Bitcoin Eyes</h1></header>
+<p><em>Part 1 of 4: Midnight for Bitcoin Developers</em></p>
+<hr>
+<p>If you&#x27;ve spent serious time in Bitcoin, Midnight&#x27;s documentation will do
+something mildly irritating. It will explain UTXO to you using the cash
+metaphor. You have a $5 bill. You can&#x27;t tear it in half. You receive change.
+There&#x27;s a helpful diagram.</p>
+<p>This series assumes you already know what a UTXO is. It starts where
+Midnight&#x27;s own docs don&#x27;t: at the point where the model actually diverges
+from what you know, and what those divergences mean in practice for
+developers who have built on Bitcoin.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-familiar-parts">The familiar parts<a href="#the-familiar-parts" class="hash-link" aria-label="Direct link to The familiar parts" title="Direct link to The familiar parts" translate="no">​</a></h2>
+<p>The foundation is genuinely familiar. Midnight is UTXO-based. NIGHT tokens,
+the network&#x27;s native token, exist as discrete unspent outputs. Transactions
+consume inputs and create outputs. Nothing about that requires explanation
+if you&#x27;ve read the Bitcoin whitepaper.</p>
+<p>Atomicity works the same way. Either all inputs are consumed and all outputs
+are created, or nothing happens. There is no partial execution, no rollback,
+no intermediate state that other transactions can observe. A Bitcoin
+developer&#x27;s instinct here is correct.</p>
+<p>Parallelism follows from the same structural property. Transactions touching
+independent UTXOs have no shared mutable state between them and can be
+processed simultaneously at the model level. This is not a feature Midnight
+added. It&#x27;s a property that comes for free from the UTXO model itself, just
+as it does in Bitcoin. Where Ethereum must sequence transactions that touch
+the same account because they share global state, Midnight transactions
+compete only when they literally try to spend the same output.</p>
+<p>Validation does not require replaying full chain history. The UTXO set
+itself does not track spent outputs. If an output is not in the set, it has
+either been spent or never existed. A node validating a new transaction
+needs the current UTXO set and the transaction itself, not a full replay
+of prior blocks.</p>
+<p>So far, so home. Now for where it diverges.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-nullifier-set-how-zswap-shields-token-transfers">The nullifier set: how Zswap shields token transfers<a href="#the-nullifier-set-how-zswap-shields-token-transfers" class="hash-link" aria-label="Direct link to The nullifier set: how Zswap shields token transfers" title="Direct link to The nullifier set: how Zswap shields token transfers" translate="no">​</a></h2>
+<p>In Bitcoin, when a UTXO is spent it is removed from the UTXO set. The set
+tracks what exists. If it&#x27;s not in the set, it&#x27;s either been spent or never
+existed, and those are the same thing from a validation standpoint. This is
+elegant. The UTXO set is bounded by the number of unspent outputs, not by
+total transaction history.</p>
+<p>The reason this works in Bitcoin is that every input explicitly references
+the UTXO it is spending by txid and output index. The reference is public.
+The UTXO being consumed is identified. Any node can look it up, verify the
+spending condition, and remove it from the set.</p>
+<p>Midnight introduces Zswap, a shielded token transfer mechanism derived from
+Zerocash. When tokens move through Zswap, the sender, receiver, amount, and
+token type are all hidden from on-chain observers. Wallet addresses and
+transaction details are not disclosed. This is what shielded transfers give
+you: the ability to transact without exposing metadata to counterparties or
+to the public ledger.</p>
+<p>But shielding creates a problem Bitcoin doesn&#x27;t have. You want to prove you
+are spending a valid output without revealing which one. You cannot reference
+the UTXO by txid and output index without pointing directly to it. The
+public reference is what makes Bitcoin&#x27;s removal approach possible, and it
+is also what destroys the privacy. If you&#x27;ve thought seriously about
+CoinJoin&#x27;s limitations, this is the same problem one level deeper. CoinJoin
+obscures the mapping between inputs and outputs within a transaction but the
+inputs themselves are still publicly referenced. An observer watching the
+UTXO set can still identify which coins are moving.</p>
+<p>Midnight solves this with a nullifier set. Instead of referencing a UTXO
+directly, the spender computes:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">nullifier = Hash(UTXO_commitment, ownerSecret)</span><br></span></code></pre></div></div>
+<p>This nullifier is added to a global set that only ever grows. Double-spend
+prevention works by set membership, the nullifier being present indicates
+the UTXO has been spent and the transaction is rejected. The ZK proof
+certifies that the spender owns a coin that exists in the commitment tree,
+without identifying which coin it is or who owns it.</p>
+<p>On-chain, the nullifier set is opaque. A watching node sees hashes entering
+an append-only set. Which coins moved, who owned them, and what values were
+transferred are not recoverable from that data. Timing correlations and
+usage patterns can still leak information at the application layer depending
+on how a contract is built, but the ledger does not directly disclose
+anything about the transfer.</p>
+<p>The tradeoff is storage. Bitcoin&#x27;s UTXO set shrinks as outputs are spent.
+Midnight&#x27;s nullifier set never shrinks. Every Zswap transfer leaves a
+permanent entry. Over time this grows without bound. That is the cost of
+the privacy property, and it is a deliberate design decision borrowed from
+the Zcash lineage. Midnight&#x27;s Zswap protocol derives from Zcash Sapling,
+which introduced the same nullifier construction. Midnight chose to inherit
+that tradeoff with eyes open.</p>
+<p>One important distinction from Zcash: while the nullifier construction
+derives from Zcash Sapling, Midnight&#x27;s Compact contracts can interact
+directly with the shielded pools. In Zcash, shielded pools and smart
+contract logic have historically been separate concerns. In Midnight they
+are integrated: a contract can receive, hold, and send shielded tokens as
+part of its logic.</p>
+<p>The practical consequence for node operators is real. A pruned Bitcoin node
+needs only the current UTXO set to validate new blocks. A Midnight full node
+must retain the entire nullifier set indefinitely. The privacy guarantee and
+the storage cost are the same tradeoff.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="eutxo-the-cardano-inheritance-and-what-it-changes">eUTXO: the Cardano inheritance and what it changes<a href="#eutxo-the-cardano-inheritance-and-what-it-changes" class="hash-link" aria-label="Direct link to eUTXO: the Cardano inheritance and what it changes" title="Direct link to eUTXO: the Cardano inheritance and what it changes" translate="no">​</a></h2>
+<p>Midnight is built as a partner chain to Cardano and inherits Cardano&#x27;s
+extended UTXO model rather than Bitcoin&#x27;s original. The extension changes
+what a UTXO can carry and therefore what spending conditions can express.</p>
+<p>In Bitcoin, a UTXO carries two things: a value in satoshis, and a locking
+script (scriptPubKey). The spending condition is entirely encoded in the
+script. This is intentional. Bitcoin Script is deliberately limited in
+expressiveness, Turing-incomplete by design, and that constraint is a
+security property. A Bitcoin Script can express simple conditions cleanly:
+single signature, multisig, hash preimage, timelock, combinations of these.
+What it cannot do cleanly is carry application state across transactions.</p>
+<p>Bitcoin Script has no native way to carry state from one transaction to the
+next. Lightning channels illustrate this clearly. Channel state is
+coordinated off-chain between the two parties, but it is enforceable
+on-chain via pre-signed commitment transactions. The off-chain coordination
+exists precisely because Bitcoin Script cannot thread state natively through
+a sequence of transactions. Covenant proposals like OP_CHECKTEMPLATEVERIFY
+address this by constraining what future transactions can look like, but
+they require reasoning about the full spending graph ahead of time. State
+that needs to travel with a UTXO either gets encoded in the script itself,
+which hits size limits quickly, or gets anchored to an OP_RETURN output and
+reconstructed off-chain. In both cases a verifier has to reconstruct
+application state from the transaction graph rather than reading it directly
+from the output being spent.</p>
+<p>Cardano&#x27;s eUTXO model adds a third field to every output: a datum. The
+datum is arbitrary structured data that travels with the UTXO and is
+available to the spending script at validation time as a first-class input.
+The output being spent carries its own context.</p>
+<p>Concretely: a UTXO representing a vote carries the voting parameters. A
+UTXO representing a DeFi position carries the position details. The spending
+script reads the datum, validates that the proposed transition is valid, and
+the output UTXO carries the updated datum. The state transition is
+self-contained and auditable without off-chain reconstruction.</p>
+<p>The datum is a tradeoff, not an upgrade. eUTXO adds expressiveness at the
+cost of complexity. UTXOs are heavier, spending conditions more involved,
+and coordination overhead increases when multiple parties interact with
+shared state. For a Bitcoin developer whose priority is security and
+trustlessness through simplicity, these are real costs worth weighing.</p>
+<p>Where the datum earns its complexity is in applications that genuinely need
+to thread state across a sequence of transactions. For simple value transfer
+Bitcoin&#x27;s lean UTXO is strictly better. For stateful protocol logic the
+datum makes things more tractable. &quot;More tractable&quot; is not the same as
+&quot;better&quot; and a Bitcoin developer is right to be skeptical of the tradeoff
+until they have a specific application that needs it.</p>
+<p>Midnight inherits the datum and extends it further. A Midnight UTXO&#x27;s datum
+has a public component on-chain and a private component stored only on the
+owner&#x27;s machine. The ZK proof attached to a transaction proves the private
+state justifies the proposed public state transition without revealing it.
+This is covered in depth in part two.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="smart-contract-execution-where-bitcoin-scripts-end-and-midnight-circuits-begin">Smart contract execution: where Bitcoin scripts end and Midnight circuits begin<a href="#smart-contract-execution-where-bitcoin-scripts-end-and-midnight-circuits-begin" class="hash-link" aria-label="Direct link to Smart contract execution: where Bitcoin scripts end and Midnight circuits begin" title="Direct link to Smart contract execution: where Bitcoin scripts end and Midnight circuits begin" translate="no">​</a></h2>
+<p>Both Bitcoin Script and Midnight circuits are mechanisms for enforcing
+conditions on state transitions. In Bitcoin, a script encodes the spending
+condition directly on the UTXO. Every node executes that script independently
+when the UTXO is spent. Validation is distributed re-execution. The opcode
+set is deliberately constrained, which keeps the attack surface small and
+makes every script formally analyzable. But the execution happens on-chain,
+by every validating node, every time.</p>
+<p>Midnight takes a different approach. Instead of storing executable logic
+on-chain, Midnight stores a verifier key for each contract entry point. The
+logic runs off-chain on the user&#x27;s machine as a Compact circuit and produces
+a ZK proof of correct execution. That proof, together with a public
+transcript of the state changes it authorizes, is what gets submitted to
+the chain. Validators verify the proof against the stored verifier key. They
+never re-execute the logic.</p>
+<p>The practical difference is in what the chain stores and what it receives.
+In Bitcoin, the locking script sits on the UTXO. The spending transaction
+provides witness data. Every node runs the script against the witness and
+reaches the same result independently.</p>
+<p>In Midnight, the chain stores a verifier key derived from the compiled
+circuit. The user runs the circuit locally with their private inputs,
+produces a proof, and submits a public transcript of the state changes
+alongside it. The chain checks the proof against the verifier key and
+applies the state changes described in the transcript. The private inputs
+never appear anywhere. The locking script is replaced by a verifier key.
+The witness stack is replaced by a proof. The script interpreter is replaced
+by a proof verifier.</p>
+<p>One property this shares with Bitcoin that Ethereum does not: local
+determinism. If a proof validates correctly on your machine, it will
+validate on-chain, barring a double-spend. You know before broadcasting
+whether the transaction will succeed. Ethereum&#x27;s gas estimation model
+offers no such guarantee.</p>
+<p>The performance implication follows directly. In Bitcoin, complex scripts
+mean expensive on-chain validation. Every byte of script logic is executed
+by every validating node. In Midnight, circuit complexity increases proof
+generation time on the submitter&#x27;s machine. Proof verification on validators
+involves elliptic curve operations and is more expensive than a simple
+signature check, but significantly cheaper than generating the proof. The
+expensive work shifts from the network to the user submitting the
+transaction.</p>
+<p>This is not an upgrade over script execution. It is a different set of
+tradeoffs. Script execution is cheap, transparent, and every node can
+independently verify every transaction by running the same deterministic
+computation against public inputs. ZK systems shift verification from
+re-execution to cryptographic assurance, replacing deterministic replay with
+assumptions about the proving system. Bitcoin&#x27;s cryptographic assumptions
+are well-understood and can be reasoned about with standard mathematics.
+ZK proof systems involve more complex primitives that require more
+specialized knowledge to audit. What you gain is expressiveness and privacy.
+What you give up is the simplicity of verification that any node can perform
+by running a script.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="two-token-types-one-chain-and-what-account-based-actually-means-here">Two token types, one chain, and what account-based actually means here<a href="#two-token-types-one-chain-and-what-account-based-actually-means-here" class="hash-link" aria-label="Direct link to Two token types, one chain, and what account-based actually means here" title="Direct link to Two token types, one chain, and what account-based actually means here" translate="no">​</a></h2>
+<p>Midnight runs two token systems simultaneously, and understanding the
+distinction matters more than the labels suggest.</p>
+<p>NIGHT is the native ledger token. It exists as a public, unshielded UTXO
+on the base ledger. Sender, receiver, and amount are all visible on-chain,
+similar to a Bitcoin UTXO. NIGHT is the capital asset of the network. You
+hold it to generate DUST, stake it to participate in consensus, and it will
+be used for governance once that mechanism is live. When NIGHT moves through
+Zswap, the transfer is shielded by the commitment/nullifier mechanism
+described earlier. DUST, the fee resource, is always shielded. These are
+distinct transfer paths, not properties of the token itself.</p>
+<p>The docs draw a useful distinction here. Unshielded ledger tokens like NIGHT
+are designed for transparency: exchanges, public treasuries, any scenario
+requiring auditability. Shielded ledger tokens are the Zswap coins: private
+peer-to-peer transfers where sender, receiver, and amount are all hidden.
+Both are UTXO-based at the protocol level. The difference is whether the
+transfer goes through the base unshielded ledger or through the Zswap
+commitment/nullifier mechanism. NIGHT can move either way depending on
+context. DUST always moves through the shielded path.</p>
+<p>Midnight also supports contract tokens, which use an account-based data
+model: balance mappings rather than discrete UTXOs. For Bitcoin developers,
+&quot;account-based&quot; means shared mutable state, which means ordering dependencies
+and the concurrency problems that follow. That concern is real but partially
+addressed. Midnight handles this better than traditional account models
+because many useful operations are commutative. Commutative operations, like
+incrementing a counter, produce the same result regardless of execution
+order, so simultaneous transactions do not conflict. Non-commutative
+operations, like read-then-write sequences, still contend. The transcript
+model minimizes conflicts where the underlying operations allow it, not
+universally.</p>
+<p>The important clarification is that <strong>account-based refers to the data
+model, not the validation mechanism</strong>. Contract token transactions go
+through the same ZK proof and public transcript system described in the
+previous section. The chain stores a verifier key, not executable code.
+Nodes verify proofs. The concurrency risk comes from shared mutable state,
+not from how the execution is validated.</p>
+<p>It is worth being precise about which Ethereum failure modes Midnight&#x27;s
+approach addresses and which it does not. Classic reentrancy attacks require
+re-entrant contract calls during execution. Midnight&#x27;s transcript model and
+the current absence of cross-contract interaction make this attack surface
+very small at mainnet launch, though this will need revisiting when
+cross-contract interaction ships. Storage collision vulnerabilities are an
+EVM-specific artifact of how Solidity maps state variables to storage slots.
+Compact does not use the same storage model so this class of bug does not
+apply. Upgrade proxy vulnerabilities are eliminated entirely because Compact
+circuits are immutable after deployment. You cannot upgrade a deployed
+contract. Bitcoin developers will consider that a feature.</p>
+<p>What Midnight does not solve is the fundamental risk of shared mutable
+state. Ordering dependencies, concurrency conflicts, and complex state
+interaction bugs exist wherever multiple parties write to the same state,
+regardless of how that state is validated. The ZK proof guarantees the
+circuit ran correctly. It does not guarantee the circuit was designed
+correctly.</p>
+<p>The honest framing is this: contract tokens are an opt-in feature for
+applications where richer state management is genuinely necessary. Complex
+DeFi logic, governance systems, anything requiring intricate balance
+accounting. The UTXO core is unaffected. A developer building a payment
+protocol has no reason to touch contract tokens. A developer building an
+AMM probably needs them and accepts the tradeoffs that come with shared
+state.</p>
+<p>Bitcoin&#x27;s position, that mutable global state is a liability and the
+constraint toward simpler models is a security property, is not wrong.
+Midnight&#x27;s position is that the constraint is too expensive for certain
+application categories. That is a legitimate disagreement and reasonable
+developers land on different sides of it depending on what they are
+building.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-to-take-away">What to take away<a href="#what-to-take-away" class="hash-link" aria-label="Direct link to What to take away" title="Direct link to What to take away" translate="no">​</a></h2>
+<p>The UTXO foundation in Midnight is real and the familiar properties hold.
+The nullifier set is a genuine architectural extension that enables shielded
+transactions Bitcoin does not natively support without significant protocol
+changes or additional layers. The eUTXO datum makes stateful protocol design
+more tractable for certain application categories, at the cost of complexity
+that Bitcoin deliberately avoids. The shift from script execution to ZK proof
+verification changes both the trust model and the performance profile: work
+moves off-chain, cryptographic assumptions replace deterministic replay, and
+expressiveness increases at the cost of auditability simplicity.</p>
+<p>The hybrid token model is where reasonable Bitcoin developers will disagree,
+and that is a legitimate disagreement about risk tolerance and application
+scope rather than a technical misunderstanding.</p>
+<p><a class="" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state">Part 2</a> covers what private
+state actually means when you&#x27;re coming from a system where every satoshi
+movement is permanently public, which is where the real conceptual distance
+between Bitcoin and Midnight opens up.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/rxbryan/blockchains-from-bitcoin-perspective/edit/main/docs/midnight-for-bitcoin-devs/utxo-model.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Introduction</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Private State vs Public UTXO</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#the-familiar-parts" class="table-of-contents__link toc-highlight">The familiar parts</a></li><li><a href="#the-nullifier-set-how-zswap-shields-token-transfers" class="table-of-contents__link toc-highlight">The nullifier set: how Zswap shields token transfers</a></li><li><a href="#eutxo-the-cardano-inheritance-and-what-it-changes" class="table-of-contents__link toc-highlight">eUTXO: the Cardano inheritance and what it changes</a></li><li><a href="#smart-contract-execution-where-bitcoin-scripts-end-and-midnight-circuits-begin" class="table-of-contents__link toc-highlight">Smart contract execution: where Bitcoin scripts end and Midnight circuits begin</a></li><li><a href="#two-token-types-one-chain-and-what-account-based-actually-means-here" class="table-of-contents__link toc-highlight">Two token types, one chain, and what account-based actually means here</a></li><li><a href="#what-to-take-away" class="table-of-contents__link toc-highlight">What to take away</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Oracle Trust Models</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/overview">Overview</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/trust-models">Trust Models</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/oracles-in-bitcoin">Oracles in Bitcoin</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/encoding-external-events">Encoding External Events</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/oracle-trust-models/failure-modes-and-tradeoffs">Failure Modes</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Midnight for Bitcoin Devs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/intro">Introduction</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/utxo-model">UTXO Model</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/private-state">Private State</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/night-dust">NIGHT/DUST</a></li><li class="footer__item"><a class="footer__link-item" href="/blockchains-from-bitcoin-perspective/midnight-for-bitcoin-devs/compact-circuits">Compact Circuits</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Author</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/rxbryan" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://medium.com/@bryanelee62" target="_blank" rel="noopener noreferrer" class="footer__link-item">Medium<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://www.linkedin.com/in/rxbryan" target="_blank" rel="noopener noreferrer" class="footer__link-item">LinkedIn<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Bryan Elee Atonye. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>
