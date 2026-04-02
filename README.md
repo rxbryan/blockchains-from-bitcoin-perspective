@@ -2,7 +2,7 @@
 
 A technical reference site examining blockchain systems through the lens of Bitcoin protocol development. The analysis starts from Bitcoin's design decisions and asks what other systems chose differently, why, and what tradeoffs follow.
 
-Live site: [rxbryan.github.io/blockchains-from-bitcoin-perspective](https://rxbryan.github.io/blockchains-from-bitcoin-perspective)
+Live site: [rxbryan.github.io/blockchains-from-bitcoin-perspective](https://rxbryan.github.io/blockchains-from-bitcoin-perspective/)
 
 ---
 
